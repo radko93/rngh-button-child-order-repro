@@ -2,15 +2,40 @@
 
 ![Build](https://github.com/radko93/rngh-button-child-order-repro/workflows/Pre%20Merge%20Checks/badge.svg)
 
-This is your new React Native Reproducer project.
+Reproducer for a `react-native-gesture-handler` iOS bug: content mounted into a button **after its
+first render** ends up *behind* its siblings, so the button looks blank.
 
-# Reproducer TODO list
+- react-native `0.88.0` (this template's version, New Architecture), react-native-gesture-handler `3.3.0`
+- iOS only. Android is not affected. 2.33.x is not affected.
+- Issue: _link to be added_
 
-- [x] 1. Create a new reproducer project.
-- [ ] 2. Git clone your repository locally.
-- [ ] 3. Edit the project to reproduce the failure you're seeing.
-- [ ] 4. Push your changes, so that Github Actions can run the CI.
-- [ ] 5. Make sure the repository is public and share the link with the issue you reported.
+## Steps
+
+1. `cd ReproducerApp && yarn && cd ios && bundle install && bundle exec pod install && cd ..`
+2. `yarn ios`
+3. Wait about 6 s, or tap **Toggle**.
+
+The only changes from the template are `ReproducerApp/App.tsx` and adding
+`react-native-gesture-handler@3.3.0`.
+
+## Expected
+
+Each RNGH button (BaseButton, Touchable, RectButton) shows the same content as the `View` control:
+a spinner from 3 s, the label again from 6 s.
+
+## Actual
+
+From the first swap on, the RNGH buttons show only the purple background. The `View` control
+updates normally.
+
+![After the swap at 3 s: the three RNGH buttons are blank, the View control shows a spinner](docs/repro.png)
+
+## Why
+
+Each button's content sits inside a View that only has a background. Fabric flattens that View and
+mounts its children into the button itself, right after it. On iOS the button keeps an underlay
+`CALayer` at sublayer index 0, and `-[UIView insertSubview:atIndex:]` counts every sublayer, so a
+child mounted after the first layout lands one position too low: below the background View.
 
 # How to use this Reproducer
 
