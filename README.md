@@ -7,7 +7,7 @@ first render** ends up *behind* its siblings, so the button looks blank.
 
 - react-native `0.88.0` (this template's version, New Architecture), react-native-gesture-handler `3.3.0`
 - iOS only. Android is not affected. 2.33.x is not affected.
-- Issue: _link to be added_
+- Issue: https://github.com/software-mansion/react-native-gesture-handler/issues/4602
 
 ## Steps
 
